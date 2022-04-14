@@ -22,6 +22,14 @@ body{
     margin-bottom: 0.9rem;
     border-radius: 10px 10px 0 0;
 }
+.card{
+    width: 286px;
+    margin: 0 auto;
+    border: 1px solid #c4c4c4;
+    border-radius: 10px;
+    /* margin: 0 0 18px 0; */
+    min-height: 40px;
+}
 .todo-heading{
     font-weight: 900;
     font-size: 1.6rem;
@@ -63,7 +71,7 @@ body{
     display: flex;
     background-color: #833AE0;
     color: white;
-    margin: 0 auto 20px auto;
+    margin: 18px auto 20px auto;
     border-radius: 71px;
     align-items: center;
     cursor: pointer;
