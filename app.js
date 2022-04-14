@@ -1,6 +1,7 @@
 // adding global variables
 const body = document.querySelector(".container");
 const container = document.querySelector(".container");
+const card = document.querySelector(".card");
 const sortIcon = document.querySelector("#sort-icon")
 const removeIcon = document.querySelector(".remove-icon");
 const addBtn = document.querySelector(".addBtn");
@@ -12,14 +13,16 @@ eventListeners();
 
 function eventListeners(){
     // setting event listeners
-    sortIcon.addEventListener("click", listTodos)
+    sortIcon.addEventListener("click", sortTodos)
     addBtn.addEventListener("click", addTodo);
     todoInputParent.addEventListener("click", deleteTodo);
+    document.addEventListener("keyup", enterEvent)
 }
 
 let clickCounter = 0;
+listTodos();
 
-function listTodos(){
+function sortTodos(){
     clickCounter++;
     let todos = getTodosFromStorage();
     if(todos.length == 0) return 0;
@@ -29,11 +32,15 @@ function listTodos(){
     todoInputParent.style.borderRadius = "10px";
     todoInputParent.style.border = "1px solid #C4C4C4";
     todoInputParent.style.margin = "0 0 18px 0";
-    
-    if(clickCounter % 2 == 0) todos.reverse(); // checking if second click
-    if(clickCounter % 3 == 0) return window.location.reload();
-    // adding todos to UI
-    todos.forEach((e, index) => {
+    card.remove();
+
+    addToUI(todoInputParent);
+}
+
+function listTodos(){
+    let todos = getTodosFromStorage();
+
+    todos.forEach(e => {
         let todoElement = document.createElement("div");
         todoElement.className = "todo-input-container";
 
@@ -44,9 +51,38 @@ function listTodos(){
                 <img src="./images/remove.png" alt="remove" class="remove-item">
             </div>
         `;
-        todoInputParent.append(todoElement);
+        card.append(todoElement);
+        todoElement.addEventListener("click", function(e){
+                if(e.target.className == "remove-item"){
+                    let todo = e.target.parentElement.previousElementSibling.textContent;
+                    deleteTodoFromStorage(todo);
+                    todoElement.remove();
+                }
+        })
     })
 }
+
+function addToUI(element){
+    let todos = getTodosFromStorage();
+    if(clickCounter % 2 == 0) todos.reverse(); // checking if second click
+    if(clickCounter % 3 == 0) return window.location.reload();
+
+    // adding todos to UI
+    todos.forEach(e => {
+        let todoElement = document.createElement("div");
+        todoElement.className = "todo-input-container";
+
+        todoElement.innerHTML = 
+        `
+            <p class="list-item">${e}</p>
+                <div class="remove-icon-container">
+                <img src="./images/remove.png" alt="remove" class="remove-item">
+            </div>
+        `;
+        element.append(todoElement);
+    })
+}
+
 
 function addTodo(){ // adding todo
         const newTodo = todoInput.value.trim();
@@ -59,6 +95,8 @@ function addTodo(){ // adding todo
         }
         else{
             addTodoToStorage(newTodo);
+            card.innerHTML = "";
+            listTodos();
             showAlert("success", "Todo is added");
         }
 }
@@ -139,4 +177,9 @@ function sortIconChange(){
     sortIcon.addEventListener("mouseleave", function(){
         sortIcon.style.background = "url('./images/sortup.png') no-repeat"
     })
+}
+function enterEvent(e){
+    if(e.key == "Enter"){
+        addTodo();
+    }
 }
