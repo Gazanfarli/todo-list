@@ -26,7 +26,6 @@ function sortTodos(){
     clickCounter++;
     let todos = getTodosFromStorage();
     if(todos.length == 0) return 0;
-    sortIconChange();
 
     todoInputParent.innerHTML = '';
     todoInputParent.style.borderRadius = "10px";
@@ -43,7 +42,8 @@ function listTodos(){
     todos.forEach(e => {
         let todoElement = document.createElement("div");
         todoElement.className = "todo-input-container";
-
+        todoElement.setAttribute("draggable", true);
+        todoElement.style.cursor = "move";
         todoElement.innerHTML = 
         `
             <p class="list-item">${e}</p>
@@ -102,12 +102,18 @@ function addTodo(){ // adding todo
 }
 
 function deleteTodo(e){
+    let todos = getTodosFromStorage();
     if(e.target.className === "remove-icon-container"){
         deleteTodoFromStorage(e.target.previousElementSibling.value);
+        card.innerHTML = "";
+        listTodos();
     }
     if(e.target.className == "remove-item"){
         e.target.parentElement.parentElement.remove();
         deleteTodoFromStorage(e.target.parentElement.previousElementSibling.textContent);
+    }
+    if(todoInputParent.innerHTML == ""){
+        window.location.reload();
     }
     todoInput.value = "";
 }
@@ -169,15 +175,6 @@ function deleteTodoFromStorage(deleteTodo){
     localStorage.setItem("todos", JSON.stringify(todos));
 }
 
-function sortIconChange(){
-    sortIcon.style.background = "url('./images/sortup.png') no-repeat";
-    sortIcon.addEventListener("mouseenter", function(){
-        sortIcon.style.background = "url('./images/sortup-hover.png') no-repeat"
-    })
-    sortIcon.addEventListener("mouseleave", function(){
-        sortIcon.style.background = "url('./images/sortup.png') no-repeat"
-    })
-}
 function enterEvent(e){
     if(e.key == "Enter"){
         addTodo();
